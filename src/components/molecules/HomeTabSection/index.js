@@ -17,9 +17,9 @@ const HomeTabSection = () => {
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: '1', title: 'New Taste'},
-    {key: '2', title: 'Popular'},
-    {key: '3', title: 'Recommended'},
+    {key: 'newTaste', title: 'New Taste'},
+    {key: 'popular', title: 'Popular'},
+    {key: 'recommended', title: 'Recommended'},
   ]);
 
   const initialLayout = {
@@ -187,9 +187,9 @@ const HomeTabSection = () => {
   );
 
   const renderScene = SceneMap({
-    1: NewTaste,
-    2: Popular,
-    3: Recommended,
+    newTaste: NewTaste,
+    popular: Popular,
+    recommended: Recommended,
   });
 
   return (

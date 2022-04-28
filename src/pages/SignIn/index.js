@@ -1,8 +1,24 @@
 import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {Header, TextInput, Button, Gap} from '../../components';
+import {useNavigation} from '@react-navigation/native';
+import {useForm} from '../../utils';
+import {useDispatch} from 'react-redux';
+import {signInAction} from '../../redux/actions';
 
-const SignIn = ({navigation}) => {
+const SignIn = () => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const [form, setForm] = useForm({
+    email: '',
+    password: '',
+  });
+
+  const handleSubmit = () => {
+    dispatch(signInAction(form, navigation));
+  };
+
   return (
     <View style={styles.page}>
       <Header title="Sign In" subTitle="Find your best ever meal" />
@@ -10,16 +26,22 @@ const SignIn = ({navigation}) => {
         <TextInput
           label="Email Address"
           placeholder="Type your email address"
-          type="email-address"
+          keyboardType="email-address"
+          name="email"
+          value={form.email}
+          onChangeText={value => setForm('email', value)}
         />
         <Gap height={16} />
         <TextInput
           label="Password"
           placeholder="Type your password"
-          secure={true}
+          secureTextEntry={true}
+          name="password"
+          value={form.password}
+          onChangeText={value => setForm('password', value)}
         />
         <Gap height={24} />
-        <Button text="Sign In" onPress={() => navigation.replace('MainApp')} />
+        <Button text="Sign In" onPress={handleSubmit} />
         <Gap height={12} />
         <Button
           text="Create New Account"

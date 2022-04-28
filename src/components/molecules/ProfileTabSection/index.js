@@ -9,6 +9,8 @@ import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {TabBar, SceneMap, TabView} from 'react-native-tab-view';
 import {ItemListMenu} from '../../../components';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {showMessage} from '../../../utils';
 
 const ProfileTabSection = () => {
   const navigation = useNavigation();
@@ -16,8 +18,8 @@ const ProfileTabSection = () => {
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: '1', title: 'Account'},
-    {key: '2', title: 'FoodMarket'},
+    {key: 'account', title: 'Account'},
+    {key: 'foodMarket', title: 'FoodMarket'},
   ]);
 
   const initialLayout = {
@@ -36,6 +38,19 @@ const ProfileTabSection = () => {
     />
   );
 
+  const handleSignOut = () => {
+    AsyncStorage.multiRemove(['token', 'userProfile']).then(() => {
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'SignIn',
+          },
+        ],
+      });
+    });
+  };
+
   const Account = () => (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.containerAccount}>
@@ -43,13 +58,7 @@ const ProfileTabSection = () => {
           text="Edit Profile"
           onPress={() => navigation.navigate('EditProfile')}
         />
-        <ItemListMenu
-          text="Sign Out"
-          onPress={() => {
-            navigation.popToTop();
-            navigation.replace('SignIn');
-          }}
-        />
+        <ItemListMenu text="Sign Out" onPress={handleSignOut} />
       </View>
     </ScrollView>
   );
@@ -66,8 +75,8 @@ const ProfileTabSection = () => {
   );
 
   const renderScene = SceneMap({
-    1: Account,
-    2: FoodMarket,
+    account: Account,
+    foodMarket: FoodMarket,
   });
 
   return (

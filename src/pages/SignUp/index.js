@@ -1,8 +1,73 @@
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Pressable,
+  Image,
+} from 'react-native';
+import React, {useState} from 'react';
 import {Header, TextInput, Button, Gap} from '../../components';
+import {useNavigation} from '@react-navigation/native';
+import {showMessage, useForm} from '../../utils';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {useDispatch} from 'react-redux';
 
-const SignUp = ({navigation}) => {
+const SignUp = () => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const [photo, setPhoto] = useState('');
+  const [form, setForm] = useForm({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+  });
+
+  const handleSubmit = () => {
+    dispatch({
+      type: 'SET_SIGNUP',
+      value: form,
+    });
+    navigation.navigate('SignUpAddress');
+  };
+
+  const handleAddPhoto = async () => {
+    await launchImageLibrary(
+      {
+        quality: 0.5,
+        maxWidth: 200,
+        maxHeight: 200,
+      },
+      response => {
+        if (response.didCancel || response.error) {
+          showMessage('Anda tidak memilih photo', 'danger');
+        } else {
+          const source = {
+            uri: response?.assets[0]?.uri,
+          };
+
+          const dataImage = {
+            uri: response?.assets[0]?.uri,
+            type: response?.assets[0]?.type,
+            name: response?.assets[0]?.fileName,
+          };
+
+          setPhoto(source);
+          dispatch({
+            type: 'SET_PHOTO',
+            value: dataImage,
+          });
+          dispatch({
+            type: 'SET_UPLOAD_STATUS',
+            value: true,
+          });
+        }
+      },
+    );
+  };
+
   return (
     <ScrollView style={styles.page} showsVerticalScrollIndicator={false}>
       <Header
@@ -12,30 +77,54 @@ const SignUp = ({navigation}) => {
       />
       <View style={styles.container}>
         <View style={styles.photo}>
-          <View style={styles.borderPhoto}>
-            <View style={styles.photoContainer}>
-              <Text style={styles.addPhoto}>Add Photo</Text>
+          <Pressable onPress={handleAddPhoto}>
+            <View style={styles.borderPhoto}>
+              {photo ? (
+                <Image source={photo} style={styles.photoContainer} />
+              ) : (
+                <View style={styles.photoContainer}>
+                  <Text style={styles.addPhoto}>Add Photo</Text>
+                </View>
+              )}
             </View>
-          </View>
+          </Pressable>
         </View>
-        <TextInput label="Full Name" placeholder="Type your full name" />
+        <TextInput
+          label="Full Name"
+          placeholder="Type your full name"
+          name="name"
+          value={form.name}
+          onChangeText={value => setForm('name', value)}
+        />
         <Gap height={16} />
         <TextInput
           label="Email Address"
           placeholder="Type your email address"
-          type="email-address"
+          keyboardType="email-address"
+          name="email"
+          value={form.email}
+          onChangeText={value => setForm('email', value)}
         />
         <Gap height={16} />
         <TextInput
           label="Password"
           placeholder="Type your password"
-          secure={true}
+          secureTextEntry
+          name="password"
+          value={form.password}
+          onChangeText={value => setForm('password', value)}
+        />
+        <Gap height={16} />
+        <TextInput
+          label="Confirmation Password"
+          placeholder="Type your confirmation password"
+          secureTextEntry
+          name="password_confirmation"
+          value={form.password_confirmation}
+          onChangeText={value => setForm('password_confirmation', value)}
         />
         <Gap height={24} />
-        <Button
-          text="Continue"
-          onPress={() => navigation.navigate('SignUpAddress')}
-        />
+        <Button text="Continue" onPress={handleSubmit} />
       </View>
     </ScrollView>
   );
@@ -55,7 +144,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   addPhoto: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Poppins-Light',
     color: '#8D92A3',
     textAlign: 'center',

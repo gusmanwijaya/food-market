@@ -17,8 +17,8 @@ const OrderTabSection = () => {
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: '1', title: 'In Progress'},
-    {key: '2', title: 'Past Orders'},
+    {key: 'inProgress', title: 'In Progress'},
+    {key: 'pastOrders', title: 'Past Orders'},
   ]);
 
   const initialLayout = {
@@ -149,8 +149,8 @@ const OrderTabSection = () => {
   );
 
   const renderScene = SceneMap({
-    1: InProgress,
-    2: PastOrders,
+    inProgress: InProgress,
+    pastOrders: PastOrders,
   });
 
   return (

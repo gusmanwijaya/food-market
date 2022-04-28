@@ -1,14 +1,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
-import {StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {Logo} from '../../assets';
 import {Gap} from '../../components';
+import {getData} from '../../utils';
+import {useNavigation} from '@react-navigation/native';
 
-const SplashScreen = ({navigation}) => {
+const SplashScreen = () => {
+  const navigation = useNavigation();
+
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace('SignIn');
+      getData('token').then(response => {
+        if (response) {
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'MainApp'}],
+          });
+        } else {
+          navigation.replace('SignIn');
+        }
+      });
     }, 2000);
   }, []);
 
@@ -31,5 +44,3 @@ const SplashScreen = ({navigation}) => {
 };
 
 export default SplashScreen;
-
-const styles = StyleSheet.create({});

@@ -14,7 +14,7 @@ const SignUpAddress = ({navigation}) => {
         <TextInput
           label="Phone No"
           placeholder="Type your phone number"
-          type="phone-pad"
+          keyboardType="phone-pad"
         />
         <Gap height={16} />
         <TextInput label="Address" placeholder="Type your address" />
@@ -22,7 +22,7 @@ const SignUpAddress = ({navigation}) => {
         <TextInput
           label="House No"
           placeholder="Type your house number"
-          type="number-pad"
+          keyboardType="number-pad"
         />
         <Gap height={16} />
         <SelectInput
