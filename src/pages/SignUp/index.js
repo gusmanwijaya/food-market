@@ -26,11 +26,32 @@ const SignUp = () => {
   });
 
   const handleSubmit = () => {
-    dispatch({
-      type: 'SET_SIGNUP',
-      value: form,
-    });
-    navigation.navigate('SignUpAddress');
+    if (
+      form.name !== '' &&
+      form.email !== '' &&
+      form.password !== '' &&
+      form.password_confirmation !== ''
+    ) {
+      const pattern = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+      if (!pattern.test(form.email)) {
+        showMessage('Email yang Anda masukkan tidak valid', 'danger');
+      } else {
+        if (form.password !== form.password_confirmation) {
+          showMessage(
+            'Password dan Confirmation Password tidak sama',
+            'danger',
+          );
+        } else {
+          dispatch({
+            type: 'SET_SIGNUP',
+            value: form,
+          });
+          navigation.navigate('SignUpAddress');
+        }
+      }
+    } else {
+      showMessage('Tolong isi semua field yang disediakan', 'danger');
+    }
   };
 
   const handleAddPhoto = async () => {
@@ -45,13 +66,13 @@ const SignUp = () => {
           showMessage('Anda tidak memilih photo', 'danger');
         } else {
           const source = {
-            uri: response?.assets[0]?.uri,
+            uri: response?.assets[response?.assets.length - 1]?.uri,
           };
 
           const dataImage = {
-            uri: response?.assets[0]?.uri,
-            type: response?.assets[0]?.type,
-            name: response?.assets[0]?.fileName,
+            uri: response?.assets[response?.assets.length - 1]?.uri,
+            type: response?.assets[response?.assets.length - 1]?.type,
+            name: response?.assets[response?.assets.length - 1]?.fileName,
           };
 
           setPhoto(source);
@@ -69,11 +90,13 @@ const SignUp = () => {
   };
 
   return (
-    <ScrollView style={styles.page} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      contentContainerStyle={styles.page}
+      showsVerticalScrollIndicator={false}>
       <Header
         title="Sign Up"
         subTitle="Register and eat"
-        onBack={() => navigation.pop()}
+        onBack={() => navigation.goBack()}
       />
       <View style={styles.container}>
         <View style={styles.photo}>
@@ -134,7 +157,7 @@ export default SignUp;
 
 const styles = StyleSheet.create({
   page: {
-    flex: 1,
+    flexGrow: 1,
   },
   container: {
     flex: 1,

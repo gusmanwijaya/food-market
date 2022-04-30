@@ -42,6 +42,7 @@ export const signUpAction =
           navigation.reset({index: 0, routes: [{name: 'SuccessSignUp'}]});
         }
         dispatch(setLoading(false));
+        showMessage('Selamat Anda berhasil sign up', 'success');
       })
       .catch(error => {
         dispatch(setLoading(false));

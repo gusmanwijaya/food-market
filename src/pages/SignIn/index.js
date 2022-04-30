@@ -2,7 +2,7 @@ import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import {Header, TextInput, Button, Gap} from '../../components';
 import {useNavigation} from '@react-navigation/native';
-import {useForm} from '../../utils';
+import {showMessage, useForm} from '../../utils';
 import {useDispatch} from 'react-redux';
 import {signInAction} from '../../redux/actions';
 
@@ -16,7 +16,11 @@ const SignIn = () => {
   });
 
   const handleSubmit = () => {
-    dispatch(signInAction(form, navigation));
+    if (form.email !== '' && form.password !== '') {
+      dispatch(signInAction(form, navigation));
+    } else {
+      showMessage('Tolong isi email dan password Anda', 'danger');
+    }
   };
 
   return (

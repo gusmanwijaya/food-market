@@ -2,21 +2,24 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {Picker} from '@react-native-picker/picker';
 
-const SelectInput = ({label, placeholder, data = []}) => {
+const SelectInput = ({
+  label,
+  placeholder,
+  data = [],
+  value,
+  setValueChange,
+}) => {
   return (
     <View>
       <Text style={styles.label}>{label}</Text>
       <View style={styles.input}>
         <Picker
-        // selectedValue={selectedLanguage}
-        // onValueChange={(itemValue, itemIndex) =>
-        //   setSelectedLanguage(itemValue)
-        // }
-        >
-          <Picker.Item label={placeholder} value="" enabled={false} />
+          selectedValue={value}
+          onValueChange={(itemValue, itemIndex) => setValueChange(itemValue)}>
+          <Picker.Item label={placeholder} value="" />
           {data.length > 0 &&
-            data.map((value, index) => (
-              <Picker.Item key={index} label={value} value={value} />
+            data.map((res, index) => (
+              <Picker.Item key={index} label={res} value={res} />
             ))}
         </Picker>
       </View>
