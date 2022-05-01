@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {StyleSheet, Text, View, Pressable} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {IcMin, IcPlus} from '../../../assets';
 
@@ -29,13 +29,13 @@ const Counter = ({onValueChange}) => {
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={() => onCount('minus')}>
+      <TouchableOpacity onPress={() => onCount('minus')} activeOpacity={0.7}>
         <IcMin />
-      </Pressable>
+      </TouchableOpacity>
       <Text style={styles.value}>{value}</Text>
-      <Pressable onPress={() => onCount('plus')}>
+      <TouchableOpacity onPress={() => onCount('plus')} activeOpacity={0.7}>
         <IcPlus />
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 };

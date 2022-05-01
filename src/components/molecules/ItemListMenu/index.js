@@ -1,15 +1,15 @@
-import {StyleSheet, Text, View, Pressable} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {IcNext} from '../../../assets';
 
 const ItemListMenu = ({onPress, text}) => {
   return (
-    <Pressable onPress={onPress}>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
       <View style={styles.container}>
         <Text style={styles.text}>{text}</Text>
         <IcNext />
       </View>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 

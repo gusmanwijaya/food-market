@@ -60,9 +60,8 @@ export const signInAction = (form, navigation) => dispatch => {
       dispatch(setLoading(false));
       storeData('token', token);
       storeData('userProfile', profile);
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'MainApp'}],
+      navigation.replace('MainApp', {
+        screen: 'Home',
       });
       showMessage('Selamat, Anda berhasil sign in', 'success');
     })

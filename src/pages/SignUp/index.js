@@ -3,7 +3,7 @@ import {
   Text,
   View,
   ScrollView,
-  Pressable,
+  TouchableOpacity,
   Image,
 } from 'react-native';
 import React, {useState} from 'react';
@@ -100,7 +100,7 @@ const SignUp = () => {
       />
       <View style={styles.container}>
         <View style={styles.photo}>
-          <Pressable onPress={handleAddPhoto}>
+          <TouchableOpacity onPress={handleAddPhoto} activeOpacity={0.7}>
             <View style={styles.borderPhoto}>
               {photo ? (
                 <Image source={photo} style={styles.photoContainer} />
@@ -110,7 +110,7 @@ const SignUp = () => {
                 </View>
               )}
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </View>
         <TextInput
           label="Full Name"

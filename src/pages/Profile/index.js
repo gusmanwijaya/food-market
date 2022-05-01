@@ -1,38 +1,87 @@
-import {StyleSheet, Text, View, Pressable, Image} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {ProfileDummy} from '../../assets';
 import {ProfileTabSection} from '../../components';
-import {getData} from '../../utils';
+import {getData, showMessage, storeData} from '../../utils';
+import {useNavigation} from '@react-navigation/native';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {API_HOST} from '../../configs';
+import axios from 'axios';
 
 const Profile = () => {
-  const [photo, setPhoto] = useState(ProfileDummy);
-  const [user, setUser] = useState({
-    name: '',
-    email: '',
-  });
+  const navigation = useNavigation();
+  const [user, setUser] = useState({});
+
+  const updateUserProfile = () => {
+    getData('userProfile').then(res => {
+      setUser(res);
+    });
+  };
+
+  const uploadPhoto = async () => {
+    await launchImageLibrary(
+      {
+        quality: 0.5,
+        maxWidth: 200,
+        maxHeight: 200,
+      },
+      response => {
+        if (response.didCancel || response.errorCode || response.errorMessage) {
+          showMessage('Anda tidak memilih photo');
+        } else {
+          const dataImage = {
+            uri: response?.assets[response?.assets.length - 1]?.uri,
+            type: response?.assets[response?.assets.length - 1]?.type,
+            name: response?.assets[response?.assets.length - 1]?.fileName,
+          };
+          let photoForUpload = new FormData();
+          photoForUpload.append('file', dataImage);
+          getData('token').then(resToken => {
+            axios
+              .post(`${API_HOST.url}/user/photo`, photoForUpload, {
+                headers: {
+                  Authorization: resToken,
+                  'Content-Type': 'multipart/form-data',
+                },
+              })
+              .then(result => {
+                getData('userProfile').then(resUser => {
+                  showMessage('Update photo berhasil', 'success');
+                  resUser.profile_photo_url = `${API_HOST.storage}/${result.data.data[0]}`;
+                  storeData('userProfile', resUser).then(() => {
+                    updateUserProfile();
+                  });
+                });
+              })
+              .catch(error => {
+                showMessage(
+                  `${error?.response?.data?.message} on Update Photo API` ||
+                    'Terjadi kesalahan di API Update Photo',
+                );
+              });
+          });
+        }
+      },
+    );
+  };
 
   useEffect(() => {
-    getData('userProfile').then(result => {
-      setPhoto({
-        uri: result?.profile_photo_url,
-      });
-      setUser({
-        ...user,
-        name: result?.name,
-        email: result?.email,
-      });
+    navigation.addListener('focus', () => {
+      updateUserProfile();
     });
-  }, [user]);
+  }, [navigation]);
 
   return (
     <View style={styles.page}>
       <View style={styles.profileDetail}>
         <View style={styles.photo}>
-          <Pressable>
+          <TouchableOpacity activeOpacity={0.7} onPress={uploadPhoto}>
             <View style={styles.borderPhoto}>
-              <Image source={photo} style={styles.photoContainer} />
+              <Image
+                source={{uri: user?.profile_photo_url}}
+                style={styles.photoContainer}
+              />
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </View>
         <Text style={styles.name}>{user.name}</Text>
         <Text style={styles.email}>{user.email}</Text>

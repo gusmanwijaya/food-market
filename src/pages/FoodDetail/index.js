@@ -1,4 +1,10 @@
-import {ImageBackground, Pressable, StyleSheet, Text, View} from 'react-native';
+import {
+  ImageBackground,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React from 'react';
 import {FoodDummy6, IcBackWhite} from '../../assets';
 import {useNavigation} from '@react-navigation/native';
@@ -12,9 +18,12 @@ const FoodDetail = () => {
   return (
     <View style={styles.page}>
       <ImageBackground source={FoodDummy6} style={styles.cover}>
-        <Pressable onPress={() => navigation.goBack()} style={styles.back}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => navigation.goBack()}
+          style={styles.back}>
           <IcBackWhite />
-        </Pressable>
+        </TouchableOpacity>
       </ImageBackground>
       <View style={styles.content}>
         <View style={styles.mainContent}>
