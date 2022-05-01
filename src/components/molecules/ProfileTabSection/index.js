@@ -8,34 +8,23 @@ import {
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {TabBar, SceneMap, TabView} from 'react-native-tab-view';
-import {ItemListMenu} from '../ItemListMenu';
+import ItemListMenu from '../ItemListMenu';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ProfileTabSection = () => {
+const renderTabBar = props => (
+  <TabBar
+    {...props}
+    indicatorStyle={styles.indicator}
+    style={styles.tabBarStyle}
+    tabStyle={styles.tabStyle}
+    renderLabel={({route, focused}) => (
+      <Text style={styles.tabText(focused)}>{route.title}</Text>
+    )}
+  />
+);
+
+const Account = () => {
   const navigation = useNavigation();
-  const layout = useWindowDimensions();
-
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    {key: 'account', title: 'Account'},
-    {key: 'foodMarket', title: 'FoodMarket'},
-  ]);
-
-  const initialLayout = {
-    width: layout.width,
-  };
-
-  const renderTabBar = props => (
-    <TabBar
-      {...props}
-      indicatorStyle={styles.indicator}
-      style={styles.tabBarStyle}
-      tabStyle={styles.tabStyle}
-      renderLabel={({route, focused}) => (
-        <Text style={styles.tabText(focused)}>{route.title}</Text>
-      )}
-    />
-  );
 
   const handleSignOut = async () => {
     await AsyncStorage.multiRemove(['token', 'userProfile']);
@@ -49,7 +38,7 @@ const ProfileTabSection = () => {
     });
   };
 
-  const Account = () => (
+  return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.containerAccount}>
         <ItemListMenu
@@ -60,8 +49,10 @@ const ProfileTabSection = () => {
       </View>
     </ScrollView>
   );
+};
 
-  const FoodMarket = () => (
+const FoodMarket = () => {
+  return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.containerFoodMarket}>
         <ItemListMenu text="Rate App" />
@@ -71,6 +62,20 @@ const ProfileTabSection = () => {
       </View>
     </ScrollView>
   );
+};
+
+const ProfileTabSection = () => {
+  const layout = useWindowDimensions();
+
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    {key: 'account', title: 'Account'},
+    {key: 'foodMarket', title: 'FoodMarket'},
+  ]);
+
+  const initialLayout = {
+    width: layout.width,
+  };
 
   const renderScene = SceneMap({
     account: Account,

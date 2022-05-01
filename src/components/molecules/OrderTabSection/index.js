@@ -8,36 +8,25 @@ import {
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {TabBar, SceneMap, TabView} from 'react-native-tab-view';
-import {ItemListFood} from '../ItemListFood';
+import ItemListFood from '../ItemListFood';
 import {FoodDummy1, FoodDummy2, FoodDummy3, FoodDummy4} from '../../../assets';
 
-const OrderTabSection = () => {
+const renderTabBar = props => (
+  <TabBar
+    {...props}
+    indicatorStyle={styles.indicator}
+    style={styles.tabBarStyle}
+    tabStyle={styles.tabStyle}
+    renderLabel={({route, focused}) => (
+      <Text style={styles.tabText(focused)}>{route.title}</Text>
+    )}
+  />
+);
+
+const InProgress = () => {
   const navigation = useNavigation();
-  const layout = useWindowDimensions();
 
-  const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    {key: 'inProgress', title: 'In Progress'},
-    {key: 'pastOrders', title: 'Past Orders'},
-  ]);
-
-  const initialLayout = {
-    width: layout.width,
-  };
-
-  const renderTabBar = props => (
-    <TabBar
-      {...props}
-      indicatorStyle={styles.indicator}
-      style={styles.tabBarStyle}
-      tabStyle={styles.tabStyle}
-      renderLabel={({route, focused}) => (
-        <Text style={styles.tabText(focused)}>{route.title}</Text>
-      )}
-    />
-  );
-
-  const InProgress = () => (
+  return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.containerInProgress}>
         <ItemListFood
@@ -85,8 +74,12 @@ const OrderTabSection = () => {
       </View>
     </ScrollView>
   );
+};
 
-  const PastOrders = () => (
+const PastOrders = () => {
+  const navigation = useNavigation();
+
+  return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.containerPastOrders}>
         <ItemListFood
@@ -147,6 +140,20 @@ const OrderTabSection = () => {
       </View>
     </ScrollView>
   );
+};
+
+const OrderTabSection = () => {
+  const layout = useWindowDimensions();
+
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    {key: 'inProgress', title: 'In Progress'},
+    {key: 'pastOrders', title: 'Past Orders'},
+  ]);
+
+  const initialLayout = {
+    width: layout.width,
+  };
 
   const renderScene = SceneMap({
     inProgress: InProgress,
