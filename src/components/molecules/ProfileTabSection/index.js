@@ -10,7 +10,6 @@ import {useNavigation} from '@react-navigation/native';
 import {TabBar, SceneMap, TabView} from 'react-native-tab-view';
 import {ItemListMenu} from '../../../components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {showMessage} from '../../../utils';
 
 const ProfileTabSection = () => {
   const navigation = useNavigation();
@@ -38,16 +37,15 @@ const ProfileTabSection = () => {
     />
   );
 
-  const handleSignOut = () => {
-    AsyncStorage.multiRemove(['token', 'userProfile']).then(() => {
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: 'SignIn',
-          },
-        ],
-      });
+  const handleSignOut = async () => {
+    await AsyncStorage.multiRemove(['token', 'userProfile']);
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'SignIn',
+        },
+      ],
     });
   };
 
