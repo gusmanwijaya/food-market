@@ -5,19 +5,25 @@ import {
   Text,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {FoodDummy6, IcBackWhite} from '../../assets';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {Button, Counter, Number, Rating} from '../../components';
 
 const FoodDetail = () => {
   const navigation = useNavigation();
+  const {params} = useRoute();
+  const [totalItem, setTotalItem] = useState(1);
 
-  const handleValueChange = () => {};
+  const handleValueChange = value => {
+    setTotalItem(value);
+  };
 
   return (
     <View style={styles.page}>
-      <ImageBackground source={FoodDummy6} style={styles.cover}>
+      <ImageBackground
+        source={params?.picturePath ? {uri: params?.picturePath} : FoodDummy6}
+        style={styles.cover}>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => navigation.goBack()}
@@ -29,24 +35,22 @@ const FoodDetail = () => {
         <View style={styles.mainContent}>
           <View style={styles.productContainer}>
             <View>
-              <Text style={styles.title}>Cherry Healty</Text>
-              <Rating number={3.8} />
+              <Text style={styles.title}>{params?.name}</Text>
+              <Rating number={params?.rate} />
             </View>
             <Counter onValueChange={handleValueChange} />
           </View>
-          <Text style={styles.desc}>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eius
-            expedita a omnis dolore in eveniet eaque est earum illum
-            necessitatibus cum sed quod saepe magnam corrupti, nesciunt dolor
-            libero ipsum.
-          </Text>
+          <Text style={styles.desc}>{params?.description}</Text>
           <Text style={styles.label}>Ingredients:</Text>
-          <Text style={styles.desc}>Seledri, telur, blueberry, madu.</Text>
+          <Text style={styles.desc}>{params?.ingredients}</Text>
         </View>
         <View style={styles.footer}>
           <View style={styles.priceContainer}>
             <Text style={styles.labelTotal}>Total Price:</Text>
-            <Number number={50000} style={styles.priceTotal} />
+            <Number
+              number={totalItem * params?.price}
+              style={styles.priceTotal}
+            />
           </View>
           <View style={styles.button}>
             <Button

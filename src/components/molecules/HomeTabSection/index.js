@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   ScrollView,
   StyleSheet,
@@ -5,14 +6,126 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
-import {FoodDummy1, FoodDummy2, FoodDummy3, FoodDummy4} from '../../../assets';
+import {FoodDummy1} from '../../../assets';
 import ItemListFood from '../ItemListFood';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {getFoodByTypes} from '../../../redux/actions';
+
+const renderTabBar = props => (
+  <TabBar
+    {...props}
+    indicatorStyle={styles.indicator}
+    style={styles.tabBarStyle}
+    tabStyle={styles.tabStyle}
+    renderLabel={({route, focused}) => (
+      <Text style={styles.tabText(focused)}>{route.title}</Text>
+    )}
+  />
+);
+
+const NewTaste = () => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const {newTaste} = useSelector(state => state.homeReducer);
+
+  useEffect(() => {
+    dispatch(getFoodByTypes('new_food'));
+  }, []);
+
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.containerNewTaste}>
+        {newTaste.length > 0 &&
+          newTaste.map((value, indexNewTaste) => {
+            return (
+              <ItemListFood
+                key={indexNewTaste}
+                onPress={() => navigation.navigate('FoodDetail', value)}
+                name={value?.name}
+                price={value?.price}
+                rating={value?.rate}
+                image={
+                  value?.picturePath ? {uri: value?.picturePath} : FoodDummy1
+                }
+                type="product"
+              />
+            );
+          })}
+      </View>
+    </ScrollView>
+  );
+};
+
+const Popular = () => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const {popular} = useSelector(state => state.homeReducer);
+
+  useEffect(() => {
+    dispatch(getFoodByTypes('popular'));
+  }, []);
+
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.containerNewTaste}>
+        {popular.length > 0 &&
+          popular.map((value, indexPopular) => {
+            return (
+              <ItemListFood
+                key={indexPopular}
+                onPress={() => navigation.navigate('FoodDetail', value)}
+                name={value?.name}
+                price={value?.price}
+                rating={value?.rate}
+                image={
+                  value?.picturePath ? {uri: value?.picturePath} : FoodDummy1
+                }
+                type="product"
+              />
+            );
+          })}
+      </View>
+    </ScrollView>
+  );
+};
+
+const Recommended = () => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const {recommended} = useSelector(state => state.homeReducer);
+
+  useEffect(() => {
+    dispatch(getFoodByTypes('recommended'));
+  }, []);
+
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.containerNewTaste}>
+        {recommended.length > 0 &&
+          recommended.map((value, indexRecommended) => {
+            return (
+              <ItemListFood
+                key={indexRecommended}
+                onPress={() => navigation.navigate('FoodDetail', value)}
+                name={value?.name}
+                price={value?.price}
+                rating={value?.rate}
+                image={
+                  value?.picturePath ? {uri: value?.picturePath} : FoodDummy1
+                }
+                type="product"
+              />
+            );
+          })}
+      </View>
+    </ScrollView>
+  );
+};
 
 const HomeTabSection = () => {
-  const navigation = useNavigation();
   const layout = useWindowDimensions();
 
   const [index, setIndex] = useState(0);
@@ -25,166 +138,6 @@ const HomeTabSection = () => {
   const initialLayout = {
     width: layout.width,
   };
-
-  const renderTabBar = props => (
-    <TabBar
-      {...props}
-      indicatorStyle={styles.indicator}
-      style={styles.tabBarStyle}
-      tabStyle={styles.tabStyle}
-      renderLabel={({route, focused}) => (
-        <Text style={styles.tabText(focused)}>{route.title}</Text>
-      )}
-    />
-  );
-
-  const NewTaste = () => (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.containerNewTaste}>
-        <ItemListFood
-          onPress={() => navigation.navigate('FoodDetail')}
-          name="Soup Bumil"
-          price={20000}
-          rating={3.5}
-          image={FoodDummy1}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy2}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy3}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy4}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy1}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy2}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-      </View>
-    </ScrollView>
-  );
-
-  const Popular = () => (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.containerNewTaste}>
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy4}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy3}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy2}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy1}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy2}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy1}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-      </View>
-    </ScrollView>
-  );
-
-  const Recommended = () => (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.containerNewTaste}>
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy1}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy2}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy3}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy4}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy1}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy2}
-          price={20000}
-          rating={3.5}
-          type="product"
-        />
-      </View>
-    </ScrollView>
-  );
 
   const renderScene = SceneMap({
     newTaste: NewTaste,
