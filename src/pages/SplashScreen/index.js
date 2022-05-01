@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import {Text, View} from 'react-native';
 import React, {useEffect} from 'react';
@@ -23,7 +22,7 @@ const SplashScreen = () => {
         }
       });
     }, 2000);
-  }, []);
+  }, [navigation]);
 
   return (
     <View

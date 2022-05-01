@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {ProfileDummy} from '../../../assets';
 import {getData} from '../../../utils';
@@ -22,7 +22,11 @@ const HomeProfile = () => {
         <Text style={styles.appName}>FoodMarket</Text>
         <Text style={styles.desc}>Let’s get some foods</Text>
       </View>
-      <Image source={photo} style={styles.profile} />
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => navigation.navigate('MainApp', {screen: 'Profile'})}>
+        <Image source={photo} style={styles.profile} />
+      </TouchableOpacity>
     </View>
   );
 };
