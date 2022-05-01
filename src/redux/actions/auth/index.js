@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {API_HOST} from '../../../configs';
 import {showMessage, storeData} from '../../../utils';
-import {setLoading} from '../../actions';
+import {setLoading} from '../global';
 
 export const signUpAction =
   (dataSignUp, photoReducer, navigation) => dispatch => {

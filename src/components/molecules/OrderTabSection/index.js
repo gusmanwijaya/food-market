@@ -8,7 +8,7 @@ import {
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {TabBar, SceneMap, TabView} from 'react-native-tab-view';
-import {ItemListFood} from '../../../components';
+import {ItemListFood} from '../ItemListFood';
 import {FoodDummy1, FoodDummy2, FoodDummy3, FoodDummy4} from '../../../assets';
 
 const OrderTabSection = () => {

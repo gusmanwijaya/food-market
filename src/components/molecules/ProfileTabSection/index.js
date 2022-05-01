@@ -8,7 +8,7 @@ import {
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {TabBar, SceneMap, TabView} from 'react-native-tab-view';
-import {ItemListMenu} from '../../../components';
+import {ItemListMenu} from '../ItemListMenu';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileTabSection = () => {

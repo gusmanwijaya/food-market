@@ -1,5 +1,3 @@
-import {globalReducer} from './global';
-import {photoReducer, signUpReducer} from './auth';
-import {homeReducer} from './home';
-
-export {globalReducer, photoReducer, signUpReducer, homeReducer};
+export * from './auth';
+export * from './global';
+export * from './home';
