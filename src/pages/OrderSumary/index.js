@@ -23,12 +23,8 @@ const OrderSumary = () => {
   const [paymentURL, setPaymentURL] = useState('https://google.com');
 
   const onNavChange = state => {
-    // TODO: Use This For Production
-    // const urlSuccess =
-    //   'http://foodmarket-backend.buildwithangga.id/midtrans/success?order_id=574&status_code=201&transaction_status=pending';
-    const stateTitle =
-      state?.title.split('/')[state?.title.split('/').length - 1];
-    if (parseInt(stateTitle) === 406) {
+    const stateUrl = state?.url.split('/')[state?.url.split('/').length - 1];
+    if (parseInt(stateUrl) === 406) {
       navigation.reset({index: 0, routes: [{name: 'SuccessOrder'}]});
     }
   };
