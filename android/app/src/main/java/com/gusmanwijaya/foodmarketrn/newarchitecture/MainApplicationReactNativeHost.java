@@ -1,4 +1,4 @@
-package com.foodmarketrn.newarchitecture;
+package com.gusmanwijaya.foodmarketrn.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.foodmarketrn.BuildConfig;
-import com.foodmarketrn.newarchitecture.components.MainComponentsRegistry;
-import com.foodmarketrn.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.gusmanwijaya.foodmarketrn.BuildConfig;
+import com.gusmanwijaya.foodmarketrn.newarchitecture.components.MainComponentsRegistry;
+import com.gusmanwijaya.foodmarketrn.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

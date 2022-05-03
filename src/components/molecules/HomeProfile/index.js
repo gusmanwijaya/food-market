@@ -9,11 +9,12 @@ const HomeProfile = () => {
   const [photo, setPhoto] = useState(ProfileDummy);
 
   useEffect(() => {
-    navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       getData('userProfile').then(result => {
         setPhoto({uri: result?.profile_photo_url});
       });
     });
+    return unsubscribe;
   }, [navigation]);
 
   return (

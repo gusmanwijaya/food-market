@@ -1,15 +1,17 @@
 import {
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   useWindowDimensions,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {TabBar, SceneMap, TabView} from 'react-native-tab-view';
 import ItemListFood from '../ItemListFood';
-import {FoodDummy1, FoodDummy2, FoodDummy3, FoodDummy4} from '../../../assets';
+import {useDispatch, useSelector} from 'react-redux';
+import {getInProgress, getOrder, getPastOrders} from '../../../redux/actions';
 
 const renderTabBar = props => (
   <TabBar
@@ -23,54 +25,55 @@ const renderTabBar = props => (
   />
 );
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
+
 const InProgress = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const {inProgress} = useSelector(state => state.orderReducer);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(50).then(() => {
+      dispatch(getOrder());
+      dispatch(getInProgress());
+      dispatch(getPastOrders());
+      setRefreshing(false);
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(getInProgress());
+  }, [dispatch]);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       <View style={styles.containerInProgress}>
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy1}
-          price={20000}
-          type="in-progress"
-          items={2}
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy2}
-          price={20000}
-          type="in-progress"
-          items={2}
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy3}
-          price={20000}
-          type="in-progress"
-          items={2}
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy4}
-          price={20000}
-          type="in-progress"
-          items={2}
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy1}
-          price={20000}
-          type="in-progress"
-          items={2}
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy2}
-          price={20000}
-          type="in-progress"
-          items={2}
-        />
+        {inProgress.length > 0 &&
+          inProgress.map((value, indexInProgress) => {
+            return (
+              <ItemListFood
+                key={indexInProgress}
+                image={{uri: value.food.picturePath}}
+                onPress={() => navigation.navigate('OrderDetail', value)}
+                type="in-progress"
+                items={value.quantity}
+                price={value.total}
+                name={value.food.name}
+                date={value.created_at}
+                status={value.status}
+              />
+            );
+          })}
       </View>
     </ScrollView>
   );
@@ -78,65 +81,49 @@ const InProgress = () => {
 
 const PastOrders = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  const {pastOrders} = useSelector(state => state.orderReducer);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(50).then(() => {
+      dispatch(getOrder());
+      dispatch(getInProgress());
+      dispatch(getPastOrders());
+      setRefreshing(false);
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(getPastOrders());
+  }, [dispatch]);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       <View style={styles.containerPastOrders}>
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy4}
-          price={20000}
-          items={2}
-          status="Progress"
-          type="past-orders"
-          date={1600841258000}
-          onPress={() => navigation.navigate('OrderDetail')}
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy3}
-          price={20000}
-          items={2}
-          status="Progress"
-          type="past-orders"
-          date={1600841258000}
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy2}
-          price={20000}
-          items={2}
-          status="Progress"
-          type="past-orders"
-          date={1600841258000}
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy1}
-          price={20000}
-          items={2}
-          status="Progress"
-          type="past-orders"
-          date={1600841258000}
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy2}
-          price={20000}
-          items={2}
-          status="Progress"
-          type="past-orders"
-          date={1600841258000}
-        />
-        <ItemListFood
-          name="Soup Bumil"
-          image={FoodDummy1}
-          price={20000}
-          items={2}
-          status="Progress"
-          type="past-orders"
-          date={1600841258000}
-        />
+        {pastOrders.length > 0 &&
+          pastOrders.map((value, indexPastOrders) => {
+            return (
+              <ItemListFood
+                key={indexPastOrders}
+                image={{uri: value.food.picturePath}}
+                onPress={() => navigation.navigate('OrderDetail', value)}
+                type="past-orders"
+                items={value.quantity}
+                price={value.total}
+                name={value.food.name}
+                date={value.created_at}
+                status={value.status}
+              />
+            );
+          })}
       </View>
     </ScrollView>
   );

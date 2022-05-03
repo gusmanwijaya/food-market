@@ -2,10 +2,10 @@ import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {ProfileTabSection} from '../../components';
 import {getData, showMessage, storeData} from '../../utils';
-import {useNavigation} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {API_HOST} from '../../configs';
 import axios from 'axios';
+import {useNavigation} from '@react-navigation/native';
 
 const Profile = () => {
   const navigation = useNavigation();
@@ -65,9 +65,10 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       updateUserProfile();
     });
+    return unsubscribe;
   }, [navigation]);
 
   return (

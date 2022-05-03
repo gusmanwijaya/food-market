@@ -1,11 +1,49 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {Button, Gap, Header, ItemListFood, ItemValue} from '../../components';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {FoodDummy1} from '../../assets';
+import {useDispatch} from 'react-redux';
+import {setLoading} from '../../redux/actions';
+import axios from 'axios';
+import {API_HOST} from '../../configs';
+import {getData, showMessage} from '../../utils';
 
 const OrderDetail = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const {params} = useRoute();
+
+  const handleCancel = () => {
+    dispatch(setLoading(true));
+    getData('token').then(resToken => {
+      axios
+        .post(
+          `${API_HOST.url}/transaction/${params?.id}`,
+          {
+            status: 'CANCELLED',
+          },
+          {
+            headers: {
+              Authorization: resToken,
+            },
+          },
+        )
+        .then(() => {
+          dispatch(setLoading(false));
+          navigation.popToTop();
+          navigation.replace('MainApp', {screen: 'Order'});
+        })
+        .catch(error => {
+          dispatch(setLoading(false));
+          showMessage(
+            `${error?.response?.data?.message} on Transaction Update API` ||
+              'Terjadi Kesalahan di API Transaction Update',
+            'danger',
+          );
+        });
+    });
+  };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -18,18 +56,30 @@ const OrderDetail = () => {
         <Text style={styles.label}>Item Ordered</Text>
         <ItemListFood
           type="order-summary"
-          name="Soup Bumil"
-          price={20000}
-          items={5}
-          image={FoodDummy1}
+          name={params?.food?.name}
+          price={params?.food?.price}
+          items={params?.quantity}
+          image={
+            params?.food?.picturePath
+              ? {uri: params?.food?.picturePath}
+              : FoodDummy1
+          }
         />
         <Text style={styles.label}>Details Transaction</Text>
-        <ItemValue label="Soup Bumil" value={20000} type="currency" />
-        <ItemValue label="Driver" value={5000} type="currency" />
-        <ItemValue label="Tax 10%" value={(10 / 100) * 20000} type="currency" />
+        <ItemValue
+          label={params?.food?.name}
+          value={params?.food?.price}
+          type="currency"
+        />
+        <ItemValue label="Driver" value={50000} type="currency" />
+        <ItemValue
+          label="Tax 10%"
+          value={(10 / 100) * params?.food?.price}
+          type="currency"
+        />
         <ItemValue
           label="Total Price"
-          value={27000}
+          value={params?.total}
           valueColor="#1ABC9C"
           type="currency"
         />
@@ -37,24 +87,37 @@ const OrderDetail = () => {
 
       <View style={styles.content}>
         <Text style={styles.label}>Deliver to:</Text>
-        <ItemValue label="Name" value="Gusman Wijaya" />
-        <ItemValue label="Phone No." value="+6281312397308" />
-        <ItemValue label="Address" value="Unib Belakang" />
-        <ItemValue label="House No." value="14" />
-        <ItemValue label="City" value="Bengkulu" />
+        <ItemValue label="Name" value={params?.user?.name} />
+        <ItemValue label="Phone No." value={params?.user?.phoneNumber} />
+        <ItemValue label="Address" value={params?.user?.address} />
+        <ItemValue label="House No." value={params?.user?.houseNumber} />
+        <ItemValue label="City" value={params?.user?.city} />
       </View>
 
       <View style={styles.content}>
         <Text style={styles.label}>Order Status:</Text>
         <ItemValue
-          label={'#adwasdwaq'}
-          value="ON DELIVERY"
-          //   valueColor={order.status === 'CANCELLED' ? '#D9435E' : '#1ABC9C'}
+          label={`#${params?.id}`}
+          value={params?.status}
+          valueColor={
+            params?.status === 'CANCELLED'
+              ? '#D9435E'
+              : params?.status === 'PENDING'
+              ? '#FFC700'
+              : '#1ABC9C'
+          }
         />
       </View>
-      <View style={styles.button}>
-        <Button text="Cancel My Order" color="#D9435E" textColor="white" />
-      </View>
+      {params?.status === 'PENDING' && (
+        <View style={styles.button}>
+          <Button
+            text="Cancel My Order"
+            color="#D9435E"
+            textColor="white"
+            onPress={handleCancel}
+          />
+        </View>
+      )}
       <Gap height={40} />
     </ScrollView>
   );

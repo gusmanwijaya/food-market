@@ -1,4 +1,4 @@
-package com.foodmarketrn.newarchitecture.components;
+package com.gusmanwijaya.foodmarketrn.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

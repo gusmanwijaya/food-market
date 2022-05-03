@@ -1,4 +1,4 @@
-package com.foodmarketrn;
+package com.gusmanwijaya.foodmarketrn;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

@@ -1,11 +1,83 @@
+/* eslint-disable radix */
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import {Button, Gap, Header, ItemListFood, ItemValue} from '../../components';
-import {useNavigation} from '@react-navigation/native';
-import {FoodDummy6} from '../../assets';
+import React, {useState} from 'react';
+import {
+  Button,
+  Gap,
+  Header,
+  ItemListFood,
+  ItemValue,
+  Loading,
+} from '../../components';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {WebView} from 'react-native-webview';
+import {getData, showMessage} from '../../utils';
+import axios from 'axios';
+import {API_HOST} from '../../configs';
 
 const OrderSumary = () => {
   const navigation = useNavigation();
+  const {params} = useRoute();
+
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [paymentURL, setPaymentURL] = useState('https://google.com');
+
+  const onNavChange = state => {
+    // TODO: Use This For Production
+    // const urlSuccess =
+    //   'http://foodmarket-backend.buildwithangga.id/midtrans/success?order_id=574&status_code=201&transaction_status=pending';
+    const stateTitle =
+      state?.title.split('/')[state?.title.split('/').length - 1];
+    if (parseInt(stateTitle) === 406) {
+      navigation.reset({index: 0, routes: [{name: 'SuccessOrder'}]});
+    }
+  };
+
+  if (isPaymentOpen) {
+    return (
+      <>
+        <Header
+          title="Payment"
+          subTitle="You deserve better meal"
+          onBack={() => setIsPaymentOpen(false)}
+        />
+        <WebView
+          source={{uri: paymentURL}}
+          startInLoadingState={true}
+          renderLoading={() => <Loading />}
+          onNavigationStateChange={onNavChange}
+        />
+      </>
+    );
+  }
+
+  const handleCheckout = () => {
+    const data = {
+      food_id: params?.item?.id,
+      user_id: params?.user?.id,
+      quantity: params?.transaction?.totalItem,
+      total: params?.transaction?.total,
+      status: 'PENDING',
+    };
+    getData('token').then(resToken => {
+      axios
+        .post(`${API_HOST.url}/checkout`, data, {
+          headers: {
+            Authorization: resToken,
+          },
+        })
+        .then(res => {
+          setIsPaymentOpen(true);
+          setPaymentURL(res?.data?.data?.payment_url);
+        })
+        .catch(error => {
+          showMessage(
+            `${error?.response?.data?.message} on Checkout API` ||
+              'Terjadi Kesalahan di API Checkout',
+          );
+        });
+    });
+  };
 
   return (
     <ScrollView>
@@ -18,19 +90,30 @@ const OrderSumary = () => {
         <Text style={styles.label}>Item Ordered</Text>
         <ItemListFood
           type="order-summary"
-          name="Cherry Healty"
-          price={50000}
-          items={5}
-          image={FoodDummy6}
-          rating={4.5}
+          name={params?.item?.name}
+          price={params?.item?.price}
+          items={params?.transaction?.totalItem}
+          image={{uri: params?.item?.picturePath}}
         />
         <Text style={styles.label}>Details Transaction</Text>
-        <ItemValue label="Cherry Healty" value={50000} type="currency" />
-        <ItemValue label="Driver" value={15000} type="currency" />
-        <ItemValue label="Tax 10%" value={5000} type="currency" />
+        <ItemValue
+          label={params?.item?.name}
+          value={params?.item?.price}
+          type="currency"
+        />
+        <ItemValue
+          label="Driver"
+          value={params?.transaction?.driver}
+          type="currency"
+        />
+        <ItemValue
+          label="Tax 10%"
+          value={params?.transaction?.tax}
+          type="currency"
+        />
         <ItemValue
           label="Total Price"
-          value={70000}
+          value={params?.transaction?.total}
           valueColor="#1ABC9C"
           type="currency"
         />
@@ -38,20 +121,14 @@ const OrderSumary = () => {
 
       <View style={styles.content}>
         <Text style={styles.label}>Deliver to:</Text>
-        <ItemValue label="Name" value="Gusman Wijaya" />
-        <ItemValue label="Phone No." value={'+6281312397308'} />
-        <ItemValue label="Address" value="Unib Belakang" />
-        <ItemValue label="House No." value={10} />
-        <ItemValue label="City" value="Bengkulu" />
+        <ItemValue label="Name" value={params?.user?.name} />
+        <ItemValue label="Phone No." value={params?.user?.phoneNumber} />
+        <ItemValue label="Address" value={params?.user?.address} />
+        <ItemValue label="House No." value={params?.user?.houseNumber} />
+        <ItemValue label="City" value={params?.user?.city} />
       </View>
       <View style={styles.button}>
-        <Button
-          text="Checkout Now"
-          onPress={() => {
-            navigation.popToTop();
-            navigation.replace('SuccessOrder');
-          }}
-        />
+        <Button text="Checkout Now" onPress={handleCheckout} />
       </View>
       <Gap height={40} />
     </ScrollView>

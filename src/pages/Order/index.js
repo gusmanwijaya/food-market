@@ -1,17 +1,30 @@
 import {StyleSheet, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {EmptyOrder, Header, OrderTabSection} from '../../components';
+import {useDispatch, useSelector} from 'react-redux';
+import {getOrder} from '../../redux/actions';
 
 const Order = () => {
+  const dispatch = useDispatch();
+
+  const {order} = useSelector(state => state.orderReducer);
+
+  useEffect(() => {
+    dispatch(getOrder());
+  }, [dispatch]);
+
   return (
     <View style={styles.page}>
-      {/* <EmptyOrder /> */}
-      <View style={styles.content}>
-        <Header title="Your Orders" subTitle="Wait for the best meal" />
-        <View style={styles.tabContainer}>
-          <OrderTabSection />
+      {order.length > 0 ? (
+        <View style={styles.content}>
+          <Header title="Your Orders" subTitle="Wait for the best meal" />
+          <View style={styles.tabContainer}>
+            <OrderTabSection />
+          </View>
         </View>
-      </View>
+      ) : (
+        <EmptyOrder />
+      )}
     </View>
   );
 };

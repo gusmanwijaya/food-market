@@ -1,12 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   useWindowDimensions,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import {FoodDummy1} from '../../../assets';
 import ItemListFood from '../ItemListFood';
@@ -26,6 +26,10 @@ const renderTabBar = props => (
   />
 );
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
+
 const NewTaste = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -33,10 +37,26 @@ const NewTaste = () => {
 
   useEffect(() => {
     dispatch(getFoodByTypes('new_food'));
-  }, []);
+  }, [dispatch]);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(50).then(() => {
+      dispatch(getFoodByTypes('new_food'));
+      dispatch(getFoodByTypes('popular'));
+      dispatch(getFoodByTypes('recommended'));
+      setRefreshing(false);
+    });
+  }, [dispatch]);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       <View style={styles.containerNewTaste}>
         {newTaste.length > 0 &&
           newTaste.map((value, indexNewTaste) => {
@@ -66,10 +86,26 @@ const Popular = () => {
 
   useEffect(() => {
     dispatch(getFoodByTypes('popular'));
-  }, []);
+  }, [dispatch]);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(50).then(() => {
+      dispatch(getFoodByTypes('new_food'));
+      dispatch(getFoodByTypes('popular'));
+      dispatch(getFoodByTypes('recommended'));
+      setRefreshing(false);
+    });
+  }, [dispatch]);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       <View style={styles.containerNewTaste}>
         {popular.length > 0 &&
           popular.map((value, indexPopular) => {
@@ -99,10 +135,26 @@ const Recommended = () => {
 
   useEffect(() => {
     dispatch(getFoodByTypes('recommended'));
-  }, []);
+  }, [dispatch]);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(50).then(() => {
+      dispatch(getFoodByTypes('new_food'));
+      dispatch(getFoodByTypes('popular'));
+      dispatch(getFoodByTypes('recommended'));
+      setRefreshing(false);
+    });
+  }, [dispatch]);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       <View style={styles.containerNewTaste}>
         {recommended.length > 0 &&
           recommended.map((value, indexRecommended) => {

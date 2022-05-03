@@ -50,6 +50,9 @@ const ItemListFood = ({
                 <Number number={price} style={styles.price} />
               </View>
             </View>
+            <View>
+              <Text style={styles.status(status)}>{status}</Text>
+            </View>
           </>
         );
       case 'past-orders':
@@ -136,7 +139,12 @@ const styles = StyleSheet.create({
   status: status => ({
     fontSize: 10,
     fontFamily: 'Poppins-Regular',
-    color: status === 'CANCELLED' ? '#D9435E' : '#1ABC9C',
+    color:
+      status === 'CANCELLED'
+        ? '#D9435E'
+        : status === 'PENDING'
+        ? '#FFC700'
+        : '#1ABC9C',
   }),
   row: {
     flexDirection: 'row',

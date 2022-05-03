@@ -21,7 +21,7 @@ const EditProfile = () => {
   });
 
   useEffect(() => {
-    navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       getData('userProfile').then(result => {
         setForm({
           ...form,
@@ -34,6 +34,7 @@ const EditProfile = () => {
         });
       });
     });
+    return unsubscribe;
   }, [form, navigation]);
 
   const handleSubmit = () => {

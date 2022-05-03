@@ -6,6 +6,7 @@ import {
   photoReducer,
   signUpReducer,
   homeReducer,
+  orderReducer,
 } from './reducers';
 
 const composerEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -15,6 +16,7 @@ const rootReducers = combineReducers({
   photoReducer,
   signUpReducer,
   homeReducer,
+  orderReducer,
 });
 
 const store = createStore(
